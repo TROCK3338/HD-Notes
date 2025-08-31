@@ -29,11 +29,24 @@ app.use(session({
   }
 }));
 
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://hd-notes-psi.vercel.app"
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Root route
+app.get("/", (req, res) => {
+  res.send("HD-Notes backend is running!");
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);
