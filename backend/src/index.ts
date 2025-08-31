@@ -1,6 +1,15 @@
 import dotenv from "dotenv";
 dotenv.config();
-// console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+
+// Environment validation
+console.log("Environment check:", {
+  NODE_ENV: process.env.NODE_ENV,
+  PORT: process.env.PORT,
+  MONGO_URI: process.env.MONGO_URI ? "[SET]" : "[NOT SET]",
+  JWT_SECRET: process.env.JWT_SECRET ? "[SET]" : "[NOT SET]",
+  FRONTEND_URL: process.env.FRONTEND_URL,
+  SESSION_SECRET: process.env.SESSION_SECRET ? "[SET]" : "[NOT SET]"
+});
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -24,8 +33,9 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'none', 
-    maxAge: 60 * 60 * 1000 // 1 hour
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', 
+    maxAge: 60 * 60 * 1000, // 1 hour
+    httpOnly: true
   }
 }));
 
@@ -33,9 +43,13 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://hd-notes-psi.vercel.app"
+      "https://hd-notes-psi.vercel.app",
+      "https://hd-notes-psi.vercel.app/"
     ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    optionsSuccessStatus: 200
   })
 );
 app.use(express.json());
@@ -46,6 +60,30 @@ app.use(passport.session());
 // Root route
 app.get("/", (req, res) => {
   res.send("HD-Notes backend is running!");
+});
+
+// Health check route
+app.get("/health", (req, res) => {
+  res.json({ 
+    status: "OK", 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    cors: {
+      origin: [
+        "http://localhost:5173",
+        "https://hd-notes-psi.vercel.app",
+        "https://hd-notes-psi.vercel.app/"
+      ]
+    }
+  });
+});
+
+// API health check
+app.get("/api/health", (req, res) => {
+  res.json({ 
+    status: "API OK", 
+    timestamp: new Date().toISOString() 
+  });
 });
 
 app.use("/api/auth", authRoutes);
