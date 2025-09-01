@@ -44,9 +44,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Root route
-app.get("/", (req, res) => {
-  res.send("HD-Notes backend is running!");
-});
+// app.get("/", (req, res) => {
+//   res.send("HD-Notes backend is running!");
+// });
 
 app.use("/api/auth", authRoutes);
 app.use("/api/notes", notesRoutes);

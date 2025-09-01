@@ -88,7 +88,7 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 
   try {
     const user = await User.findOne({ email });
-    if (!user || user.otp !== otp || !user.otpExpiry || user.otpExpiry < new Date()) {
+    if (!user || String(user.otp) !== String(otp) || !user.otpExpiry || user.otpExpiry < new Date()) {
       res.status(400).json({ message: "Invalid or expired OTP" });
       return;
     }
@@ -106,8 +106,9 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 
     res.cookie("access_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      // secure: process.env.NODE_ENV === "production",
+      secure: true,
+      sameSite: "none",
       maxAge: 60 * 60 * 1000
     });
 
@@ -138,7 +139,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     res.clearCookie("access_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax"
+      sameSite: "none"
     });
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
@@ -199,8 +200,9 @@ export const googleCallback = async (req: Request, res: Response): Promise<void>
 
     res.cookie("access_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      // secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
       maxAge: 60 * 60 * 1000,
     });
 
