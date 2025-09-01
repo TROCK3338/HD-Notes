@@ -436,7 +436,7 @@ export default function SignUpPage() {
 
             {/* Google Sign In */}
             <button
-            onClick={() => window.location.href = 'http://localhost:4000/api/auth/google'}
+            onClick={() => window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
             >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">

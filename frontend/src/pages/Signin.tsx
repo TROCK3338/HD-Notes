@@ -274,7 +274,7 @@ function Signin() {
             onClick={() => {
               // Clear any existing errors before redirecting
               setErrors({});
-              window.location.href = 'http://localhost:4000/api/auth/google';
+              window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
             }}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 transition mb-4"
